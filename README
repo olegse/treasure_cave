@@ -1,0 +1,14 @@
+
+ Start application with:
+  
+  docker-compose up -d
+
+
+  Access an application at:
+    
+    http://<HOST>:8080
+
+
+  The admin page is:
+
+    http://<HOST>:8080/admin.php

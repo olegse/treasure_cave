@@ -1,0 +1,8 @@
+                $(".modal-title").html(data.response);
+                $("#empModal").modal("show");
+                $("#money").text(data.money + "$");
+                $("#points").text(data.points);
+                if(!data.items) {
+                  data.items = "";
+                }
+                $("#items").text(data.items);
