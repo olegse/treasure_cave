@@ -1,0 +1,70 @@
+.container {
+  margin-top: 20px;
+  margin-left: 10px;
+  border-width: medium;
+}
+
+body {
+  font-weight: bold;
+  font-family: "Free Mono";
+}
+
+span {
+  display: inline-block;
+}
+
+
+#one {
+  color: red;
+  background-color: MediumSeaGreen;
+  font-size: 120%;
+}
+
+#two {
+  color: green;
+  background-color: LightBlue;
+  font-size: 120%;
+}
+
+.treasure {
+  width: 15%;
+  text-align: left;
+  background-color: white;
+}
+
+.amount {
+  width: 150px;
+  margin-right: 10%;
+  text-align: right;
+}
+
+#points_convert { 
+  margin-left: 20px;
+}
+
+#points_converted {
+  width: 50px;
+}
+
+.input {
+  background-color: blue;
+  width: 30px;
+}
+
+#items { 
+  color: black;
+  font-weight: bold;
+}
+
+.buttons {
+  margin-top: 20px;
+  border: none;
+}
+
+.action_button {
+  padding: 5px; 
+}
+
+#send {
+  visibility: hidden;
+}
