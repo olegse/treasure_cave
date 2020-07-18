@@ -9,8 +9,13 @@ $pass = $_POST['pass'];
 
 $result = 
   $db->query("SELECT id,password 
+<<<<<<< HEAD
               FROM ".T_USERS." ".
              "WHERE  username = '$user'");
+=======
+              FROM   users
+              WHERE  username = '$user'");
+>>>>>>> cc509e2a5bcd6afe8855f10cbb6323da560bc039
 
 if($result->num_rows == 0)  {
   echo "<p>User was not found</p>";

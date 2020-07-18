@@ -7,7 +7,7 @@ services:
     container_name: php
     ports:
       - 9000:9000
-    volumes:    # this is the document root, so variable?
+    volumes:   
       - ./src:/srv/www/api
       - ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf
     environment:
@@ -34,7 +34,7 @@ services:
       #- ./sql/tables.sql:/docker-entrypoint-initdb.d/
     depends_on:
       - php
-    environment:      # what if without it?
-      #MYSQL_USER: ${MYSQL_USER}
-      #MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    environment:
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}

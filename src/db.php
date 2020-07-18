@@ -90,6 +90,7 @@ class db {
                   PRIMARY KEY(id))"
                 );
 
+    $this->new_user(ADMIN_USER,ADMIN_PASS);   // admin (default) user
     return true;
   }
                   
