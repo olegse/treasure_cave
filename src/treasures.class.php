@@ -73,8 +73,8 @@ class Treasures {
                               points = $points 
                         WHERE user  ='$this->user'"
                       );
+    echo json_encode($this->treasures);
   }
-
     
   // Return json for user treasures
   public function get_items() {

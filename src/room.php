@@ -153,7 +153,32 @@ $(document).ready(function(){
   // Run when page is loaded
   getItems();
 
-  //$("#available_items").text("iPhone,Nokia,4K TV,Trip on the Boat,Toy Soldier,Puppy,Skydiving,Spy Drone");
+  function showHint(money) {
+    if (money.length == 0) {
+      $("#points_converted").html("");
+      return;
+    } 
+    var max_money = $("#money").attr("value");
+    if(parseInt(money) > parseInt(max_money)) {
+      $("#money_convert").val(max_money);
+    }
+    else {
+      $.get("convert.php",{amount: money}, 
+          function(response){
+            $("#points_converted").html(response)
+            });
+    }
+  }
+
+  $("#convert").click(function(){
+    var money = $("#money_convert").val();
+    var points = $("#points_converted").html();
+    $.post("treasures.class.php", 
+            { fn: "convert_money",
+              money: money, points: points});
+            //function(data) { getItems(); } );
+    getItems();
+  });
 
 });
 </script>
@@ -192,34 +217,6 @@ $(document).ready(function(){
     <button id="convert">Convert</button>
   </div>
 
-  <script type="text/javascript">
-    function showHint(money) {
-      if (money.length == 0) {
-        $("#points_converted").html("");
-        return;
-      } 
-      var max_money = $("#money").attr("value");
-      if(parseInt(money) > parseInt(max_money)) {
-        $("#money_convert").val(max_money);
-      }
-      else {
-        $.get("convert.php",{amount: money}, 
-            function(response){
-              $("#points_converted").html(response)
-              });
-      }
-    }
-
-    $("#convert").click(function(){
-      var money = $("#money_convert").val();
-      var points = $("#points_converted").html();
-      $.post("treasures.class.php", 
-              { fn: "convert_money",
-                money: money, points: points},
-              function(data) { alert(data); } );
-      getItems();
-    });
-  </script>
 
   <div class="buttons">
     <button class="action_button" id="play" >Play!!!</button></br>
