@@ -13,4 +13,4 @@ define("MONEY_MAX",100);
 define("POINT_MAX",200);
 define("BANK_URL","http://nginx/raiffeisenbank.php");
 define("MONEY_PER_PACK",50);
-define("RATIO",8);
+define("RATIO",3);

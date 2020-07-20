@@ -1,4 +1,11 @@
-<?php session_start(); ?>
+<?php
+session_start();
+require_once("secret.php");
+
+$_SESSION['ratio'] = RATIO;
+
+?>
+
 <!DOCTYPE HTML5>
 <html>
  <head>
@@ -41,7 +48,7 @@
    </div>
 
    <br/>
-   <table border='0' style='border-collapse: collapse;'>
+   <table border='1' style='border-collapse: collapse;'>
     <tr>
      <th>ID</th>
      <th>User</th>
@@ -51,7 +58,6 @@
       require_once('db.php');
       $conn = new db();
       $users = $conn->query("SELECT id,username FROM users");
-      echo "<table>";
       while($row = $users->fetch_assoc())
       {
         echo "<tr>";
@@ -61,7 +67,6 @@
         echo "  <td><button class='reset_items' value='$row[id]' >Reset</button></td>";
         echo "<tr>";
       }
-      echo "</table>";
       echo "  <td><button id='create_user'>Create user</button></td>";
     ?>
    </table>

@@ -1,14 +1,110 @@
 
+ Application is implented in docker containers. "src" directory is mounted 
+ insider "nginx" and "php" containers in order to server static and dynamic 
+ content. "index" directive is pointed to the "index.php" where login prompt
+ is found.
+  
  Start application with:
   
   docker-compose up -d
 
+ Threee containers will be created:
+  
+  mariadb
+  php (PHP-FPM) 
+  nginx
 
-  Access an application at:
+
+ "mariadb" container maintaines an SQL database. The tables are:
+
+  users           manages registered users
+  user_items      holds available items and money per user
+  treasures       holds treasures that were already won
+ 
+ For every user entry in "user_items" and "treasures" table will be created with the 
+ following layout:
+
+  id        user id (unique for the user)
+  money     amount of money that user can win
+  items     available items that user can win
+
+ The purpose of the table is to track available items for the user.
+
+ Contrary, "treasures" table list user wins, the layout is:
+
+  id        user id (unique for the user)
+  user      username 
+  money     amount of money that user already win
+  points    amount of that user already win
+  items     amount of items that user already win
+
+ Amount of money, available items (and more constants) are defined within
+ "secret.php" file. 
+
+ If user wins the money, it gots substracted from the available amount from
+ "user_items" and added to the "treasures" table. The default amount of the 
+ available money is set by MONEY_GAME_MAX, and amount of the money that can
+ be won ranges from 0 to MONEY_MAX.
+
+ Items are stored within BLOB using serialize() function (defined in db.php).
+ When user wins an item it gots randomly choosen and removed from the available
+ items. Prompt is issued to make user choose to send or to cancel a price.
+ If user chooses to send an item it is added to the "treasures" table, 
+ otherwise discarded. 
+
+ If user wins points, the amount is randomly selected from the range of 0 to
+ POINT_MAX.
+
+ Access an application at:
     
     http://<HOST>:8080
 
+ After successful authentification (after registration) you will be redirected
+ to the "play room".
 
-  The admin page is:
+ Press "PLAY!" button to get a random price. 
+
+ "treasures.class.php" file defines a "Treasures" class and is instantiated each 
+ time the button is clicked. treasures array in turn will have following members:
+
+   money
+   points
+   items             items that user already wone; unserialized 
+                     on each read, thus can be returned to the page
+   available_items   available items from the "user_treasures" table
+   available_money   available money from the "user_treasures" table
+   win               one of the money, points or items
+   response          response message
+
+ and is used to manipulate user data and update values of the main page, once returned.
+
+ "db.php" defines database wrapper class. It creates and populates initial
+ tables, creates and deletes users, reset items and is used to send money to the users
+ bank account.
+
+ The main page also includes a convertion option. The default ratio is set by RATIO
+ constant.
+
+ It is an admin page that can help to create users, recreate database and a unit test
+ for the convertion between money and points. 
+
+ The admin page is at:
 
     http://<HOST>:8080/admin.php
+
+
+ The default user "admin" is always created.
+
+ The console command to send a money to the user account is:
+
+   curl -d "user=oleg" -X POST http://NGINX_CONTAINER_ADDR/send_money.php 
+   
+ To find address of the nginx container, run:
+
+   docker inspect nginx -f "{{json .NetworkSettings}}" | grep -o "\(IPAddress\)[^,]\+" | sed 's/"/ /g' | awk -F: '{ if($2 ~ /[0-9]/) print $2}
+
+ The amount of money sent each time defined by MONEY_PER_PACK.
+
+
+ * Currently an "play" room page has options that should be available only for administrator, but currently
+ separation is not implemented. Nevertheles, it should provide you with the complete testing availability.
