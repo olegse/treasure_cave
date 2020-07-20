@@ -10,9 +10,6 @@ services:
     volumes:   
       - ./src:/srv/www/api
       - ./php/www.conf:/usr/local/etc/php-fpm.d/www.conf
-    environment:
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
   nginx:
     image: nginx:latest
@@ -35,6 +32,4 @@ services:
     depends_on:
       - php
     environment:
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
