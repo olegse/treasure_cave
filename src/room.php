@@ -28,59 +28,77 @@ if(!isset($_SESSION["logged_in"])) {
 <script type="text/javascript">
 $(document).ready(function(){
 
-
   // Trigger random function
   $("#play").click(function(){
     $.post("treasures.class.php",
-          { fn: "play"},
-            function(data) {
-
-              loadItems(data);
-            }
-            ,"json");
+           { 
+            fn: "play"
+           },
+           function(data) 
+           {
+              loadItems(data);  // distribute data on a page
+           }
+           ,
+           "json"
+         );
   });
     
   // Win money explicitly ("Win Money" button)
   $("#win_money").click(function(){
-    $.post("treasures.class.php",{ fn: "win_money"}, 
-      function(data) {
-         //alert(data); });
-        loadItems(data);
-      }, "json"); 
+    $.post("treasures.class.php",
+            { 
+              fn: "win_money"
+            }, 
+            function(data) 
+            {
+              loadItems(data);
+            },
+            "json"
+          ); 
   });
  
   // Win points explicitly ("Win Points" button)
   $("#win_points").click(function(){
-    $.post("treasures.class.php",{ fn: "win_points"},
-        function(data) {
-          //alert(data); 
-          loadItems(data);
-        }, "json");
+    $.post("treasures.class.php",
+            {
+              fn: "win_points"
+            },
+            function(data) 
+            {
+              loadItems(data);
+            },
+            "json"
+         );
   });
 
   // Win items explicitly ("Win Items" button)
   $("#win_items").click(function(){
-    $.post("treasures.class.php",{ fn: "win_items"},
-         function(data) {
-           //alert(data); });
-           loadItems(data);
-        },"json");
+    $.post("treasures.class.php",
+            { 
+              fn: "win_items"
+            },
+            function(data) 
+            {
+             loadItems(data);
+            },
+            "json"
+          );
 
   });
 
-  // Debug
+  // Debug response
   $("#get_items").click(function(){
-    $.post("treasures.class.php",{ 
-            fn: "get_items" },
-            function(data) {
-             alert(data) });
+    $.post("treasures.class.php",
+            { 
+              fn: "get_items" 
+            },
+            function(data) 
+            {
+               alert(data) 
+            }
+         );
   });
 
-  // Update the page with the treasures ("Load Items" button)
-  $("#load_items").click(function(){
-    getItems();
-  });
-    
   // Close button
   $("#close").click(function(){
      $("#empModal").modal("hide");
@@ -92,20 +110,31 @@ $(document).ready(function(){
      $("#empModal").modal("show");
   }
 
+  // Update the page with treasures ("Load Items" button)
+  $("#load_items").click(function(){
+    getItems();
+  });
+    
   // Get page items
   function getItems(){
-    $.post("treasures.class.php",{ 
-            fn: "get_items" },
-            function(data) {
-             //alert(data) });
+    $.post("treasures.class.php",
+            { 
+              fn: "get_items" 
+            },
+            function(data) 
+            {
               loadItems(data);
-            }, "json");
+            },
+            "json"
+          );
   }
 
   // Distribute response data on a page
   function loadItems(data) {
 
+    // Write response to the console
     $.each(data,function(i,v){ console.log(i + " " + v); });
+
     if(data.win == "items") { // Handle items
                         
       // Prompt for sending or canceling
@@ -135,49 +164,53 @@ $(document).ready(function(){
     else if(data.response) {  // regular modal
       response_in_modal(data.response);
     }
+
+    // "Treasures" fields
+
+    // Money 
     $("#money").text(data.money + "$");
-    $("#money").attr("value",data.money);
+    $("#money").attr("value",data.money); // setting attribute here
+                                          // to 
 
-    // Display real amount in the convert field
-    $("#money_convert").val(data.money);
-    showHint(data.money);
-
+    // Points
     $("#points").text(data.points);
+
+    // Items
     if(!data.items) {
       data.items = "";  // otherwise NULL is displayed
     }
     $("#items").text(data.items);
     $("#available_items").text(data.available_items);
+
+    // Display real amount in the convert field
+    $("#money_convert").val(data.money);
+    showHint(data.money);   // calculate points
+
   }
 
   // Run when page is loaded
   getItems();
 
-  function showHint(money) {
-    if (money.length == 0) {
-      $("#points_converted").html("");
-      return;
-    } 
-    var max_money = $("#money").attr("value");
-    if(parseInt(money) > parseInt(max_money)) {
-      $("#money_convert").val(max_money);
-    }
-    else {
-      $.get("convert.php",{amount: money}, 
-          function(response){
-            $("#points_converted").html(response)
-            });
-    }
-  }
 
+  // Convert money 
   $("#convert").click(function(){
-    var money = $("#money_convert").val();
-    var points = $("#points_converted").html();
+    var money = $("#money_convert").val();    // get money value
+    var points = $("#points_converted").html(); // get points
     $.post("treasures.class.php", 
-            { fn: "convert_money",
-              money: money, points: points});
-            //function(data) { getItems(); } );
+            { 
+              fn: "convert_money",
+              money: money,
+              points: points
+            }
+          );
+         
     getItems();
+  });
+
+
+  // Log Out
+  $("#log_out").click(function(){
+    window.location="/logout.php";
   });
 
 });
@@ -217,7 +250,36 @@ $(document).ready(function(){
     <button id="convert">Convert</button>
   </div>
 
+  <script type="text/javascript">
+    
+    function showHint(money) {
+      if (money.length == 0) {
+        $("#points_converted").html("");    // converted points
+        return;
+      } 
 
+      // Maximum amount of available money
+      var max_money = $("#money").attr("value"); // html includes '$'
+
+      // If requested money is higher than maximum money avaiable
+      if(parseInt(money) > parseInt(max_money)) {
+        // reset amount
+        $("#money_convert").val(max_money);
+      }
+      else {
+        $.get("convert.php",
+              { 
+                amount: money
+              }, 
+              function(response){   // display converted points here
+                $("#points_converted").html(response)
+              });
+      }
+    }
+  </script>
+
+
+  <!-- Buttons -->
   <div class="buttons">
     <button class="action_button" id="play" >Play!!!</button></br>
     <button class="action_button" id="win_money">Win Money</button></br>
@@ -225,6 +287,7 @@ $(document).ready(function(){
     <button class="action_button" id="win_points">Win Points</button></br>
     <button class="action_button" id="get_items">Get Items (in clear)</button></br>
     <button class="action_button" id="load_items">Load Items</button></br>
+    <button class="action_button" id="log_out">Log Out</br>
   </div>
 </div>
 
@@ -242,6 +305,7 @@ $(document).ready(function(){
   </div>
 </div>
 
+<!-- Modal for the items -->
 <div class="modal fade" id="promptModal" role="dialog-1">
   <div class="modal-dialog">
     <div class="modal-content">

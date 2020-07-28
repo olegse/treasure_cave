@@ -113,16 +113,10 @@ $_SESSION['ratio'] = RATIO;
                   location.reload();
              });
       });
-
-     $('#ok').click(function(){
-        $('.modal-body').html("Sent!");
-        $('#empModal').modal('show');
-     });   
-
-     $('#clear_session').click(function(){
-      $.post("users.php",{ fn: "clear_session" }, function(data){response_in_modal(data);})});
   });
   </script>
+
+  <!-- Recreate database -->
   <form action="create_db.php" method="GET" target="_self" />
     <label for="create_db">
       <button id="create_db" type="submit" value="Create">Create database</button>

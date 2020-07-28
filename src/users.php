@@ -6,6 +6,11 @@ require_once('db.php');
 $conn = new db();
 if(isset($_POST['fn'])) {
   switch($_POST['fn']) {
+    case 'create_user':
+      $conn->new_user(ADMIN_USER,ADMIN_PASS);
+        echo "Admin user was created";
+        break;
+
     case 'reset_items':
       $conn->reset_items($_POST['user_id']);
         echo "User items were reloaded";

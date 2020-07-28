@@ -1,11 +1,11 @@
 
- Application is implented in docker containers. Threee containers will be created:
+ Application is implented in docker containers. Three containers will be created:
   
-  mariadb
-  php (PHP-FPM) 
-  nginx
+  - mariadb
+  - php (PHP-FPM) 
+  - nginx
 
- "src" directory is mounted insider "nginx" and "php" containers in order to server
+ "src" directory is mounted inside "nginx" and "php" containers in order to server
  static and dynamic content. "index" directive is pointed to the "index.php" where
  login prompt is found.
 
@@ -17,13 +17,16 @@
 
   DOCKER_HOST:8008/[index.php]
 
+ 
+ Note "secret.php" file, it defines necessary constants.
 
  "mariadb" container maintaines an SQL database. The tables are:
 
-  users           manages registered users
-  user_items      holds available items and money per user
-  treasures       holds treasures that were already won
- 
+  - users           manages registered users
+  - user_items      holds available items and money per user
+  - treasures       holds treasures that were already won
+
+
  After signup a user and hashed password will be stored in the "users" table and user
  will be redirected to the "play room" (room.php).
 
@@ -36,9 +39,6 @@
   money     amount of money that user can win
   items     available items that user can win
 
- Amount of money, and available items (and more constants) are defined within
- "secret.php" file. 
-
  Contrary, "treasures" table list user wins, the layout is:
 
   id        user id (unique for the user)
@@ -50,10 +50,16 @@
  The game logic is implemented in "treasures.class.php". User data is retrieved
  using methods defined in "db.php". 
 
- On each click on "PLAY" button (room.php) "Treasures" class will be instantiated. 
+ The algorithm can be described as follows:
 
- "wins" array lists methods that are executed randomly on each POST request to the 
- "treasures.class.php" and are: win_money, win_points and win_items. 
+  1. User clicks "PLAY" button (room.php) 
+  2. POST resquest is made to "treasures.class.php" 
+  3. "Treasures" class is instantiated, populating treasures array with the 
+     user data.
+  4. Random function from the "wins" array (win_money, win_points or win_items)
+     is executed
+  5. Resulting response data is stored inside treasures array and returned in json to the 
+     room.php where gots distributed with javascript
 
  treasures array is used to track and manipulate user's prices. An arry will
  have following members:
@@ -67,27 +73,49 @@
    win               one of the money, points or items
    response          response message
 
- Data returned in POST request is distributed dynamically using jQuery.
-
- If user wins the money, it gots substracted from the available amount from
- "user_items" and added to the "treasures" table. The default amount of the 
+ If user wins the money (win_money), it gots substracted from the available amount
+ from "user_items" and added to the "treasures" table. The default amount of the 
  available money is set by MONEY_GAME_MAX, and amount of the money that can
  be won ranges from 0 to MONEY_MAX.
 
- Items are stored within BLOB using serialize() function.
+ Available items are defined in "db.php" and stored within BLOB using serialize()
+ function.
 
  When user wins an item it gots randomly choosen and removed from the available
  items. Prompt is issued to make user choose to send or to cancel a price.
  If user chooses to send an item it is added to the "treasures" table, 
- otherwise discarded. 
+ otherwise discarded both "treasures" and "user_items" table (not available any more).
 
  If user wins points, the amount is randomly selected from the range of 0 to
  POINT_MAX.
 
- Money can be converted to the points, convertion rate is defined by RATIO constant.
 
- The main page also includes a convertion option. The default ratio is set by RATIO
- constant.
+ Convertion.
+ ----------
+
+ Money can be converted to the points, convertion rate is defined by RATIO constant.
+ Implemented in "convert.php".
+
+
+ Sending money.
+ -------------
+
+ The console command to send a money to the user account is:
+
+   curl -d "user=<USER>" -X POST http:/DOCKER_HOST/send_money.php 
+
+ "send_money.php" will call to the send_money() in db.php where user
+ money will be loaded and posted to the script set by BANK_URL constant
+ (that is meant to be bank api), on successful request database will be 
+ updated accordingly.
+
+ Currently amount of money sent defined by MONEY_PER_PACK. If user doesn't
+ have enough money, all available money will be sent. There is not option
+ (not yet implemented) to send more than one pack per request.
+
+
+ Admin 
+ -------------
 
  It is an admin page that can help to create users, recreate database and a unit test
  for the convertion between money and points. 
@@ -96,14 +124,9 @@
 
     http://<HOST>:8080/admin.php
 
- The default user "admin" is always created.
+ The default user "admin" with password admin is always created.
 
 
- The console command to send a money to the user account is:
 
-   curl -d "user=oleg" -X POST http:/DOCKER_HOST/send_money.php 
-   
- The amount of money sent each time defined by MONEY_PER_PACK.
-
- * Currently an "play" room page has options that should be available only for administrator, but currently
- separation is not implemented. Nevertheles, it should provide you with the complete testing availability.
+ * Currently an "play" room page has options that should be available only for administrator, but
+ separation is not implemented yet. Nevertheles, it should provide you with the complete testing availability.

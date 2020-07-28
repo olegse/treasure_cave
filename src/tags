@@ -1,0 +1,129 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ADMIN_PASS	secret.php	/^define("ADMIN_PASS","admin");$/;"	d
+ADMIN_USER	secret.php	/^define("ADMIN_USER","admin");$/;"	d
+BANK_URL	secret.php	/^define("BANK_URL","http:\/\/nginx\/raiffeisenbank.php");$/;"	d
+DATABASE	secret.php	/^define("DATABASE","treasure_cave"); $/;"	d
+MONEY_GAME_MAX	secret.php	/^define("MONEY_GAME_MAX",1000);$/;"	d
+MONEY_MAX	secret.php	/^define("MONEY_MAX",100);$/;"	d
+MONEY_PER_PACK	secret.php	/^define("MONEY_PER_PACK",50);$/;"	d
+MYSQL_HOST	secret.php	/^define("MYSQL_HOST","mariadb");$/;"	d
+MYSQL_USER	secret.php	/^define("MYSQL_USER","admin");$/;"	d
+MYSQL_USER_PASSWORD	secret.php	/^define("MYSQL_USER_PASSWORD","admin");$/;"	d
+POINT_MAX	secret.php	/^define("POINT_MAX",200);$/;"	d
+RATIO	secret.php	/^define("RATIO",3);$/;"	d
+T_TREASURES	secret.php	/^define("T_TREASURES","treasures"); $/;"	d
+T_USERS	secret.php	/^define("T_USERS","users");            \/\/ "T" for table$/;"	d
+T_USER_ITEMS	secret.php	/^define("T_USER_ITEMS","user_items"); $/;"	d
+Treasures	treasures.class.php	/^class Treasures {$/;"	c
+__construct	db.php	/^  function __construct() {$/;"	f
+__construct	treasures.class.php	/^  function __construct($user) {$/;"	f
+amount	convert.php	/^$amount = $_GET['amount'];$/;"	v
+available_items	treasures.class.php	/^    $available_items = $this->treasures['available_items'];$/;"	v
+available_items	treasures.class.php	/^    $available_items= serialize($available_items);$/;"	v
+cancel_item	treasures.class.php	/^  public function cancel_item() {$/;"	f
+ch	db.php	/^    $ch = curl_init();$/;"	v
+client_info	db.php	/^  function client_info() {$/;"	f
+conn	admin.php	/^      $conn = new db();$/;"	v
+conn	db.php	/^  public $conn;$/;"	v
+conn	send_money.php	/^$conn = new db();$/;"	v
+conn	treasures.class.php	/^    $this->conn = new db();$/;"	v
+conn	treasures.class.php	/^  private $conn;$/;"	v
+conn	users.php	/^$conn = new db();$/;"	v
+conn_close	db.php	/^  function conn_close() {$/;"	f
+conn_state	db.php	/^  function conn_state() {$/;"	f
+convert_money	treasures.class.php	/^  public function convert_money($money,$points) {$/;"	f
+create_db	db.php	/^  function create_db() { $/;"	f
+database	db.php	/^  public $database = DATABASE;$/;"	v
+db	create_db.php	/^$db = new db();$/;"	v
+db	db.php	/^class db { $/;"	c
+db	login.php	/^$db   = new db();$/;"	v
+db	register.php	/^$db = new db();$/;"	v
+debug	db.php	/^    $this->debug=false;$/;"	v
+debug	db.php	/^  public $debug = false;$/;"	v
+delete_user	db.php	/^  function delete_user($user_id) {$/;"	f
+game	treasures.class.php	/^$game = new Treasures($user);$/;"	v
+getItems	room.php	/^  function getItems(){$/;"	f
+get_available_items	treasures.class.php	/^  public function get_available_items() {$/;"	f
+get_items	treasures.class.php	/^  public function get_items() {$/;"	f
+headers	db.php	/^    $headers = array();$/;"	v
+host	db.php	/^  public $host = "mariadb";$/;"	v
+init_user	db.php	/^  function init_user($user) {$/;"	f
+init_user_treasures	treasures.class.php	/^  private function init_user_treasures() {$/;"	f
+item	treasures.class.php	/^    $item = $available_items[$item_num];$/;"	v
+item_num	treasures.class.php	/^    $item_num = rand(0,count($available_items)-1);$/;"	v
+items	db.php	/^    $items= serialize($this->items);    # store in database blob$/;"	v
+items	db.php	/^  public $items = array('iPhone', 'Nokia', '4K TV', 'Trip on the Boat',$/;"	v
+items	treasures.class.php	/^      $items = $items->fetch_assoc();$/;"	v
+items	treasures.class.php	/^    $items= $this->conn->query("SELECT items,money ".$/;"	v
+items_empty	treasures.class.php	/^        $this->items_empty = true;          \/\/ D$/;"	v
+items_empty	treasures.class.php	/^  private $items_empty = false;$/;"	v
+loadItems	room.php	/^  function loadItems(data) {$/;"	f
+load_money	db.php	/^  private function load_money($user) {$/;"	f
+money	db.php	/^       $money = 0;$/;"	v
+money	db.php	/^    $money = $this->load_money($user);$/;"	v
+money	db.php	/^    $money = $this->query("SELECT money ".$/;"	v
+money	treasures.class.php	/^        $money = $_POST['money'];$/;"	v
+money	treasures.class.php	/^    $money = $this->treasures['money'] - $money;$/;"	v
+money_to_send	db.php	/^       $money_to_send = $money;$/;"	v
+money_to_send	db.php	/^       $money_to_send = MONEY_PER_PACK;$/;"	v
+new_user	db.php	/^  function new_user($user,$password) {$/;"	f
+onreadystatechange	admin.php	/^    xmlhttp.onreadystatechange = function() {$/;"	j
+pass	db.php	/^  public $pass = "root";$/;"	v
+pass	login.php	/^$pass = $_POST['pass'];$/;"	v
+password	db.php	/^    $password = password_hash($password,PASSWORD_DEFAULT);$/;"	v
+password	register.php	/^$password = $_POST['password'];$/;"	v
+play	treasures.class.php	/^  public function play() { $/;"	f
+points	treasures.class.php	/^        $points = $_POST['points'];$/;"	v
+points	treasures.class.php	/^    $points = $this->treasures['points'] + $points;$/;"	v
+query	db.php	/^    $query = preg_replace( '\/\\s+\/', ' ', $query );$/;"	v
+query	db.php	/^  function query($query) {$/;"	f
+ratio	convert.php	/^  $ratio  = $_GET['ratio'];$/;"	v
+ratio	convert.php	/^$ratio = $_SESSION['ratio'];$/;"	v
+reset_items	db.php	/^  function reset_items($user_id) {$/;"	f
+response	treasures.class.php	/^      $response = "You >>>>>>> won <b>$win $<\/b> <<<<<<<<< <\/br>";$/;"	v
+response	treasures.class.php	/^    $response = "You won >>>>> $win <<<< points!!!<\/br>";$/;"	v
+response_in_modal	admin.php	/^      function response_in_modal(response) {$/;"	f
+response_in_modal	room.php	/^  function response_in_modal(response) {$/;"	f
+result	db.php	/^    $result = $this->conn->query($query) or$/;"	v
+result	db.php	/^    $result = $this->query("SELECT * FROM users WHERE username = '$user'");$/;"	v
+result	db.php	/^    $result = $this->query("SHOW SCHEMAS LIKE '$this->database'");$/;"	v
+result	db.php	/^    $result = curl_exec($ch);$/;"	v
+result	login.php	/^$result = $/;"	v
+return	treasures.class.php	/^      $return = "Nothing this time, try again ;) !!!";$/;"	v
+send_money	db.php	/^  public function send_money($user) {$/;"	f
+showHint	admin.php	/^  function showHint() {$/;"	f
+showHint	room.php	/^  function showHint(money) {$/;"	f
+table_treasures	db.php	/^  public $table_treasures = T_TREASURES;$/;"	v
+table_users	db.php	/^  public $table_users = T_USERS;$/;"	v
+treasures	treasures.class.php	/^    $this->treasures = $/;"	v
+treasures	treasures.class.php	/^    $this->treasures = $this->treasures->fetch_assoc();$/;"	v
+treasures	treasures.class.php	/^  private $treasures;$/;"	v
+use_database	db.php	/^  function use_database() {$/;"	f
+user	db.php	/^    $user = strtolower($user);$/;"	v
+user	db.php	/^  public $user = "root";$/;"	v
+user	login.php	/^$user = $_POST['user'];$/;"	v
+user	register.php	/^$user = $_POST['user'];$/;"	v
+user	send_money.php	/^$user = $_POST['user']; $/;"	v
+user	treasures.class.php	/^    $this->user = $_SESSION['user'];$/;"	v
+user	treasures.class.php	/^  private $user;$/;"	v
+user_data	login.php	/^  $user_data = $result->fetch_assoc();$/;"	v
+user_exists	db.php	/^  private function user_exists($user) {$/;"	f
+user_id	treasures.class.php	/^    $this->user_id = $_SESSION['user_id'];    \/\/ maybe not the right place$/;"	v
+user_items	treasures.class.php	/^        $user_items = array();$/;"	v
+user_items	treasures.class.php	/^    $user_items = $this->treasures['items'];$/;"	v
+user_items	treasures.class.php	/^    $user_items = array_merge($user_items,array_splice($available_items,$item_num,1));$/;"	v
+user_items	treasures.class.php	/^    $user_items= serialize($user_items);$/;"	v
+users	admin.php	/^      $users = $conn->query("SELECT id,username FROM users");$/;"	v
+win	treasures.class.php	/^      $win = rand(0,$this->treasures['available_money']);$/;"	v
+win	treasures.class.php	/^      $win = rand(0,MONEY_MAX);$/;"	v
+win	treasures.class.php	/^    $win = rand(0,POINT_MAX);$/;"	v
+win_items	treasures.class.php	/^  public function win_items() {$/;"	f
+win_money	treasures.class.php	/^  public function win_money() {$/;"	f
+win_points	treasures.class.php	/^  public function win_points() {$/;"	f
+wins	treasures.class.php	/^  public  $wins = array('win_money','win_points', 'win_items');$/;"	v
+xmlhttp.onreadystatechange	admin.php	/^    xmlhttp.onreadystatechange = function() {$/;"	j

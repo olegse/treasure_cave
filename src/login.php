@@ -4,8 +4,12 @@ session_start();
 require("db.php");
 
 $db   = new db();
-$user = $_POST['user'];
-$pass = $_POST['pass'];
+
+
+$user = (isset($_SESSION['user'])) ? $_SESSION['user'] : $_POST['user'];
+$pass = (isset($_SESSION['pass'])) ? $_SESSION['pass'] : $_POST['pass'];
+
+#var_dump($_POST);
 
 $result = 
   $db->query("SELECT id,password 

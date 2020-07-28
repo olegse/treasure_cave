@@ -5,10 +5,11 @@ require("db.php");
 #var_dump($_POST);
 $db = new db();
 
-$user = $_POST['user'];
-$password = $_POST['password'];
-if($db->new_user($user,$password))
-  echo "<p>User was created</p>";
-echo "<a href='/index.php'>Back</a>";
-echo "<script type='text/javascript'>";
-echo "setTimeout(function(){window.location='/index.php';}, 7000) </script>";
+$_SESSION['user'] = $_POST['user'];
+$_SESSION['pass'] = $_POST['password'];
+
+var_dump($_SESSION);
+if($db->new_user($_SESSION['user'],$_SESSION['pass'])) { 
+  echo "<p>User was created. Redirecting to a play room...</p>";
+  echo "<script type='text/javascript'>setTimeout(function(){window.location='login.php';},3000);</script>";
+}

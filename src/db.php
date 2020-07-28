@@ -65,6 +65,9 @@ class db {
   // removed from the 'user_items' table and added to the 'treasures' table
   // of the user. In this way we track won and available items. Once all the
   // items are won there is nothing more available.
+  // 
+  // Admin user is created by default
+
   function create_db() { 
     $this->query("DROP DATABASE IF EXISTS $this->database");
     $this->query("CREATE SCHEMA $this->database");
@@ -121,6 +124,7 @@ class db {
 
   // Add new user to 'users'.
   function new_user($user,$password) {
+    var_dump(func_get_args());
     if($this->user_exists($user)) {
       echo "User '$user' already exists</br>";
       return false;
@@ -131,6 +135,8 @@ class db {
     $this->query("INSERT INTO $this->table_users
                   (username,password)
                   VALUES ('$user','$password')");
+
+    // Init user tables
     $this->init_user($user);
     return true;
   }
@@ -176,7 +182,7 @@ class db {
     $money = $this->load_money($user);
     if($money < MONEY_PER_PACK) { // last money
        $money_to_send = $money;
-       $money = 0;
+       $money = 0;    // money finished :(
     }
     else
        $money_to_send = MONEY_PER_PACK;
@@ -199,7 +205,7 @@ class db {
     }
     else {    // update database on successful send
       if($money != 0)
-         $money -= $money_to_send;
+         $money -= $money_to_send;   // substrcact sent money
       $this->query("UPDATE ".T_TREASURES." SET money = '$money' WHERE user = '$user'");
     }
     curl_close ($ch);
@@ -207,7 +213,7 @@ class db {
     echo "$result";
   }
 
-  // Report connection state (true/faylse)
+  // Report connection state (true/false)
   function conn_state() {
     return @$this->conn->ping();
   }
