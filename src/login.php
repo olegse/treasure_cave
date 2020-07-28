@@ -5,11 +5,9 @@ require("db.php");
 
 $db   = new db();
 
-
+# Variables in SESSION will be set if user was registering (register.php),
 $user = (isset($_SESSION['user'])) ? $_SESSION['user'] : $_POST['user'];
 $pass = (isset($_SESSION['pass'])) ? $_SESSION['pass'] : $_POST['pass'];
-
-#var_dump($_POST);
 
 $result = 
   $db->query("SELECT id,password 

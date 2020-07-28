@@ -115,9 +115,9 @@ class db {
     $this->query("INSERT INTO user_items (items,money) 
                   VALUES('$items',".MONEY_GAME_MAX.")");
 
-    $_SESSION["user"] = $user;
-    $_SESSION["user_id"]= $this->query("SELECT LAST_INSERT_ID()",true)->fetch_row()[0];
-    $_SESSION["logged_in"]= true;
+    #$_SESSION["user"] = $user;
+    #$_SESSION["user_id"]= $this->query("SELECT LAST_INSERT_ID()",true)->fetch_row()[0];
+    #$_SESSION["logged_in"]= true;
   }
 
   // Admin Part
