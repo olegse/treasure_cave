@@ -28,9 +28,10 @@ else {
     $_SESSION['user'] = $user;
     $_SESSION['user_id'] = $user_data['id'];
     $_SESSION['logged_in'] = true;
-    $_SESSION['ratio'] = RATIO;
+    $_SESSION['ratio'] = RATIO;   # store ratio
 
-    header("location: room.php");
+    # continue to the play room
+    echo "<script type='text/javascript'>setTimeout(function(){window.location='room.php';},3000);</script>";
   }
   else {
     echo "<p>Password is not correct</p>";

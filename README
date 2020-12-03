@@ -1,13 +1,72 @@
 
+ Overview:
+
+ It is a simple casino game application. 
+
+ Application comprised from three main elements::
+
+   Nginx <-> PHP <-> MySQL
+
+
+ Application logic can be described in the following steps:
+
+  1) User logs in 
+  2) User enters a "game room" where he can do all available 
+     actions provided by our simple casino
+
+ To allow for application to work we maintain a database with the
+ following table structure:
+
+  * users           manages registered users
+  * user_items      holds available items and money per user
+  * treasures       holds treasures that were already won
+
+ User must exist prior he can use an application. 
+ 
+Application logic: 
+-----------------
+
+ All the database operations are handled in "db.php" file.
+
+ Note "secret.php" file, it defines necessary constants needed for database
+ access and others used during the game:
+
+  MYSQL_HOST
+  MYSQL_USER
+  MYSQL_DATABASE
+  MYSQL_USER
+  MYSQL_PASSWORD
+  ADMIN_USER
+  ADMIN_PASS
+  T_USERS
+  T_USER_ITEMS
+  T_TREASURES
+  MONEY_GAME_MAX
+  MONEY_MAX
+  POINT_MAX
+  BANK_URL
+  MONEY_PER_PACK
+  RATIO
+
+
+ On the very first login, during sign up database layout is created.
+
+ Each new user is assigned an entry in the T_TREASURES table. 
+
+
+
  Application is implented in docker containers. Three containers will be created:
   
-  - mariadb
-  - php (PHP-FPM) 
-  - nginx
+  * mariadb
+  * php (PHP-FPM) 
+  * nginx
 
  "src" directory is mounted inside "nginx" and "php" containers in order to server
- static and dynamic content. "index" directive is pointed to the "index.php" where
+ static and dynamic content. 
+ 
+ "index" directive is pointed to the "index.php" where
  login prompt is found.
+
 
  Start application with:
   
@@ -18,14 +77,6 @@
   DOCKER_HOST:8008/[index.php]
 
  
- Note "secret.php" file, it defines necessary constants.
-
- "mariadb" container maintaines an SQL database. The tables are:
-
-  - users           manages registered users
-  - user_items      holds available items and money per user
-  - treasures       holds treasures that were already won
-
 
  After signup a user and hashed password will be stored in the "users" table and user
  will be redirected to the "play room" (room.php).

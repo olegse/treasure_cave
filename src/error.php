@@ -11,7 +11,9 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-  <p><?php echo $_SESSION['message'] ?></p>
+  <?php echo "<p>$_SESSION[message]</p>"
+        session_destroy();
+  ?>
   <a href='/index.php'>Back to login</a>
 </body>
 </html>

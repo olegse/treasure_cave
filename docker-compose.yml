@@ -15,21 +15,31 @@ services:
     image: nginx:latest
     container_name: nginx
     ports:
-      - 8080:80
+      - 1888:80
     volumes:
       - ./src:/srv/www/api    # document root
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-    depends_on:
-      - php
 
   mysql:
     image: mariadb
     container_name: mariadb
-    ports:
-      - 3306:3306
+    #ports:
+      #- 3306:3306
     #volumes:
       #- ./sql/tables.sql:/docker-entrypoint-initdb.d/
-    depends_on:
-      - php
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+
+  client:
+    image: mariadb
+    container_name: client
+    depends_on:
+      - mysql
+    restart: always
+    #entrypoint: [ "/bin/bash" ]
+    stdin_open: true
+    tty: true
+    entrypoint: [ "mysql", "-hmysql", "-uroot", "-p${MYSQL_ROOT_PASSWORD}" ]

@@ -7,6 +7,7 @@ if(!isset($_SESSION["logged_in"])) {
   header("location: error.php");    // session_destroy()
 }
 
+var_dump($_SESSION);
 ?>
 
 <!DOCTYPE html>
@@ -115,6 +116,9 @@ $(document).ready(function(){
     getItems();
   });
     
+  // Functions
+  //
+
   // Get page items
   function getItems(){
     $.post("treasures.class.php",
@@ -191,7 +195,6 @@ $(document).ready(function(){
   // Run when page is loaded
   getItems();
 
-
   // Convert money 
   $("#convert").click(function(){
     var money = $("#money_convert").val();    // get money value
@@ -204,7 +207,7 @@ $(document).ready(function(){
             }
           );
          
-    getItems();
+    getItems();     // Update page
   });
 
 

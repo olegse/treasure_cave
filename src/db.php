@@ -7,9 +7,9 @@ class db {
   public $conn;
   public $debug = false;
   public $host = "mariadb";
-  public $user = "root";
-  public $pass = "root";
-  public $database = DATABASE;
+  public $user = MYSQL_USER;
+  public $pass = MYSQL_PASSWORD;
+  public $database = MYSQL_DATABASE;
   public $table_users = T_USERS;
   public $table_treasures = T_TREASURES;
   public $items = array('iPhone', 'Nokia', '4K TV', 'Trip on the Boat',
@@ -25,23 +25,34 @@ class db {
       )
       die($mysqli->connect_error);
 
+    // Select default database
     $this->use_database(); 
     return $this->conn;
   }
 
-  // Use database will eliminate additional table schema name
-  // specification in the next queries. Ensure that database exists,
-  // will craete database on the first run.
+  // Select default database for the queries (USE MYSQL_DATABASE).
+  // Ensure that database exists. will create database on the first run.
   function use_database() {
-    $result = $this->query("SHOW SCHEMAS LIKE '$this->database'");
-    if($result->num_rows == 0)
-      $this->create_db();
-    $this->query("USE $this->database");
+    // can be empty if wasn't created with docker-compose
+    if($this->query("SHOW SCHEMAS LIKE '$this->database'")
+                                                   ->num_rows)
+    {
+      if($this->query("SHOW TABLES IN $this->database")
+                                                   ->num_rows)
+      { # tables are not in place; database was created by docker-compose
+        $this->query("USE $this->database");
+      }
+      else
+      $this->create_db();         # init database layout
+    }                                              
+    else
+      $this->create_db();         # init database layout
   }
 
   // Queries wrapper. Allows to dump successful and failed queries.
   // Returns MySQLi Result Object (https://www.php.net/manual/en/class.mysqli-result.php)
   function query($query) {
+    $this->debug=0;
     $query = preg_replace( '/\s+/', ' ', $query );
 
     $result = $this->conn->query($query) or
@@ -93,25 +104,26 @@ class db {
                   PRIMARY KEY(id))"
                 );
 
-    $this->new_user(ADMIN_USER,ADMIN_PASS);   // admin (default) user
-    return true;
-  }
-                  
-  // Return true if no user matches, false otherwise
-  private function user_exists($user) {
-    $result = $this->query("SELECT * FROM users WHERE username = '$user'");
-    if($result->num_rows > 0)
-      return true;
-    else
-      return false;
+    # Add admin user. Indendent to access admin page (not
+    # really implemented).
+    $user = ADMIN_USER;
+    $password = password_hash(ADMIN_PASS,PASSWORD_DEFAULT); 
+    $this->query("INSERT INTO $this->table_users   
+              (username,password)                 
+              VALUES ('$user','$password')");                           
   }
 
-  // Create an entry in "treasures" and "user_items' tables for the
-  // new user (initialize)
+  // Initialize application data for the new user
   function init_user($user) {
+
+    // 
     $this->query("INSERT INTO $this->table_treasures (user) VALUES ('$user')");
 
     $items= serialize($this->items);    # store in database blob
+
+    // Create pool of available items for the new user
+    //  (probably better way to do it is to insert it
+    //   as the default values when new  entry is added) 
     $this->query("INSERT INTO user_items (items,money) 
                   VALUES('$items',".MONEY_GAME_MAX.")");
 
@@ -120,11 +132,18 @@ class db {
     #$_SESSION["logged_in"]= true;
   }
 
-  // Admin Part
+  // Return true if no user matches, false otherwise.
+  private function user_exists($user) {
+    $result = $this->query("SELECT * FROM users WHERE username = '$user'");
+    if($result->num_rows > 0)
+      return true;
+    else
+      return false;
+  }
 
-  // Add new user to 'users'.
+  // Add new user to 'users' table
   function new_user($user,$password) {
-    var_dump(func_get_args());
+
     if($this->user_exists($user)) {
       echo "User '$user' already exists</br>";
       return false;
@@ -136,7 +155,7 @@ class db {
                   (username,password)
                   VALUES ('$user','$password')");
 
-    // Init user tables
+    // Create new entry for the user in the game table
     $this->init_user($user);
     return true;
   }

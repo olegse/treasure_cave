@@ -13,14 +13,14 @@ class Treasures {
   function __construct($user) {
     $this->user = $_SESSION['user'];
     $this->user_id = $_SESSION['user_id'];    // maybe not the right place
-    $this->conn = new db();
+    $this->conn = new db();     // initialize user data
 
     // Initialize array of user treasures and additional variables needed to
     // provide a response
     $this->init_user_treasures();
   }
 
-  // Inintialize treasures array. The resulting variables set:
+  // Inintialize treasures array:
   //    money
   //    points
   //    items             items that user already wone; unserialized 
@@ -29,6 +29,8 @@ class Treasures {
   //    available_money   available money from the "user_treasures" table
   //    win               one of the money, points or items
   //    response          response message
+  //
+  //    Resulting json is distributed on the page
   private function init_user_treasures() {
     $this->treasures = 
         $this->conn->query("
@@ -207,12 +209,14 @@ class Treasures {
     echo json_encode($this->treasures);
   }
 
+  # Run one of the function names stored in wins[]
   public function play() { 
     call_user_func(array(__NAMESPACE__.'\Treasures',
                             $this->wins[rand(0,2)]));
   } 
 }
 
+# Where the fuck user comes from?
 $game = new Treasures($user);
 
 if(isset($_POST['fn'])) {
