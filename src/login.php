@@ -3,11 +3,11 @@
 session_start();
 require("db.php");
 
-$db   = new db();
+$db   = new db();     // here db layout is triggered first
 
 # Variables in SESSION will be set if user was registering (register.php),
-$user = (isset($_SESSION['user'])) ? $_SESSION['user'] : $_POST['user'];
-$pass = (isset($_SESSION['pass'])) ? $_SESSION['pass'] : $_POST['pass'];
+$user =  $_POST['user'];
+$pass =  $_POST['pass'];
 
 $result = 
   $db->query("SELECT id,password 
@@ -31,7 +31,7 @@ else {
     $_SESSION['ratio'] = RATIO;   # store ratio
 
     # continue to the play room
-    echo "<script type='text/javascript'>setTimeout(function(){window.location='room.php';},3000);</script>";
+    echo "<script type='text/javascript'>setTimeout(function(){window.location='room.php';},3);</script>";
   }
   else {
     echo "<p>Password is not correct</p>";

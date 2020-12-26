@@ -1,35 +1,59 @@
 
  Overview:
+ -----------
 
- It is a simple casino game application. 
+ It is a simple casino game application. Required functionality:
 
- Application comprised from three main elements::
+  1). User has an account
+  2). User can win: money, points and items
+  3). Money that user can win are limited
+  4). Items that user can win are limited
+  5). User must accept or reject an item that he wins
+  6). Points are not limited
+  7). Points can be converted to the money according to the predefined rate
 
-   Nginx <-> PHP <-> MySQL
+ Application is implented in the stack of MySql, Php and Nginx stack. Each of them runs in separated docker 
+ containers, additional container is created with SQL client started and can be quickly attached to perform
+ database queries. 
 
+ Following is the list of created services are created by docker-compose:
+  
+  * mariadb (sql server)
+  * php (php-fpm) 
+  * nginx (Web server)
+  * client (sql client)
 
- Application logic can be described in the following steps:
+ "src" directory holds all the source files and is mounted inside "nginx" and "php" containers in order to server
+ static and dynamic contents. 
+ 
+ "index" directive is pointed to the "index.php" where login prompt is found.
+
+ Start application with:
+  
+  docker-compose up -d
+
+ and point a browser to the docker host on port 80:
+
+  DOCKER_HOST:80/[index.php]
+
+Application logic: 
+-----------------
+
+ Application logic can be summarized in the following steps:
 
   1) User logs in 
   2) User enters a "game room" where he can do all available 
      actions provided by our simple casino
 
- To allow for application to work we maintain a database with the
- following table structure:
+ We using database to store and manipulate application data. It
+ is comprised from the following tables:
 
   * users           manages registered users
   * user_items      holds available items and money per user
-  * treasures       holds treasures that were already won
+  * treasures       holds treasures per user that were already won
 
- User must exist prior he can use an application. 
- 
-Application logic: 
------------------
-
- All the database operations are handled in "db.php" file.
-
- Note "secret.php" file, it defines necessary constants needed for database
- access and others used during the game:
+ All the database operations are handled in "db.php" file. All the application related constants
+ are listed in 'secrets.php' file and are:
 
   MYSQL_HOST
   MYSQL_USER
@@ -41,7 +65,7 @@ Application logic:
   T_USERS
   T_USER_ITEMS
   T_TREASURES
-  MONEY_GAME_MAX
+  MONEY_GAME_MAX             Maximum amount of money user can win
   MONEY_MAX
   POINT_MAX
   BANK_URL
@@ -49,59 +73,58 @@ Application logic:
   RATIO
 
 
- On the very first login, during sign up database layout is created.
+ User must exist before he can use an application. On the first login he have to register
+ at which point necessary tables will be created. Also, on the very first login, during sign
+ up database is created. To provide a full functionality we use three tables defined by: T_USERS,
+ T_TREASURES and T_USER_ITEMS variables.
 
- Each new user is assigned an entry in the T_TREASURES table. 
+ T_USER_ITEMS and T_TREASURES tables are used to track available and won prizes respectively.
 
+  T_USER_ITEMS layout: 
+   -> id        user id (unique for the user)
+   -> money     amount of money that user can win
+   -> items     available items that user can win
 
+ T_TREASURES layout:
 
- Application is implented in docker containers. Three containers will be created:
+   -> id        user id (unique for the user)
+   -> user      username 
+   -> money     amount of money that user already won
+   -> points    amount of that user already won
+   -> items     amount of items that user already won
+
+ User is identified by 'id' column value first generated when user entry is created in T_USERS
+ table on a sign up and used thereafter as a foreign key in T_USERS and T_USER_ITEMS.
+
+ Each time new entry is created in T_USER_ITEMS, money and items fields are initialized with default
+ values stored in MONEY_GAME_MAX and ITEMS.
+ 
+ After successful registration all the necessary table entries are created and user redirected to
+ "login.php" and ending in "room.php".
+
+ "login.php" file is passed during registration and login procedures to ensure user existence and
+ setting SESSION variables. Following variables are set:
+ 
+  $_SESSION['user'
+  user_id
+  logged_in
+  ratio
+
+ "room.php" implements "play room" interface. Several buttons are available for the user:
   
-  * mariadb
-  * php (PHP-FPM) 
-  * nginx
-
- "src" directory is mounted inside "nginx" and "php" containers in order to server
- static and dynamic content. 
+  (which?)
  
- "index" directive is pointed to the "index.php" where
- login prompt is found.
-
-
- Start application with:
+ Click events are handled by jQuery functions defined in "room.sj", that in turn issues an appropriate API request
+ processed by functions in "treasures.class.php". 
   
-  docker-compose up -d
+ "treasures.class.php" implenents game logic while all the data is retrieved using methods defined 
+ in "db.php". 
 
- and point a browser to the docker host on port 8080:
+ Three types of wins are available: money, points and items. Function names used for their implementations
+ are stored in GAMES array constant and are choosed randomly for each game.
 
-  DOCKER_HOST:8008/[index.php]
-
- 
-
- After signup a user and hashed password will be stored in the "users" table and user
- will be redirected to the "play room" (room.php).
-
- Also entries in "user_items" and "treasures" tables will be created.
- 
- The purpose of the "user_items" table is to track available items for the user.
- The layout is:
-
-  id        user id (unique for the user)
-  money     amount of money that user can win
-  items     available items that user can win
-
- Contrary, "treasures" table list user wins, the layout is:
-
-  id        user id (unique for the user)
-  user      username 
-  money     amount of money that user already win
-  points    amount of that user already win
-  items     amount of items that user already win
-
- The game logic is implemented in "treasures.class.php". User data is retrieved
- using methods defined in "db.php". 
-
- The algorithm can be described as follows:
+ That's it.
+ The algorithm can be described as folloyws:
 
   1. User clicks "PLAY" button (room.php) 
   2. POST resquest is made to "treasures.class.php" 
@@ -112,6 +135,7 @@ Application logic:
   5. Resulting response data is stored inside treasures array and returned in json to the 
      room.php where gots distributed with javascript
 
+ Users 
  treasures array is used to track and manipulate user's prices. An arry will
  have following members:
 
@@ -175,7 +199,7 @@ Application logic:
 
     http://<HOST>:8080/admin.php
 
- The default user "admin" with password admin is always created.
+ The default user "admin" with password "admin" is created by default.
 
 
 

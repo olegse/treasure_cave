@@ -1,18 +1,20 @@
 <?php
-session_start();
+session_start();    // make session variables available
 
 require_once("db.php");
 
 class Treasures {
-  private $conn;
-  private $user;
+  private $conn;      // database connection handler
+  private $user;      // user name
+  private $user_id;
   private $treasures;
   private $items_empty = false;
-  public  $wins = array('win_money','win_points', 'win_items');
 
+  // Resulting is $treasures array with all related user
+  // information
   function __construct($user) {
     $this->user = $_SESSION['user'];
-    $this->user_id = $_SESSION['user_id'];    // maybe not the right place
+    $this->user_id = $_SESSION['user_id'];
     $this->conn = new db();     // initialize user data
 
     // Initialize array of user treasures and additional variables needed to
@@ -21,79 +23,93 @@ class Treasures {
   }
 
   // Inintialize treasures array:
-  //    money
-  //    points
+  //    money             user money
+  //    points            user point
   //    items             items that user already wone; unserialized 
   //                      on each read, thus can be returned to the page
   //    available_items   available items from the "user_treasures" table
   //    available_money   available money from the "user_treasures" table
-  //    win               one of the money, points or items
+  //    win               game type; one of the money, points or items    play()
   //    response          response message
   //
-  //    Resulting json is distributed on the page
+  //    Resulting json is distributed on the page with load_data() jQuery
+  //    function and written to the console for debugging
+  //
   private function init_user_treasures() {
+
+    // Get user items from database
     $this->treasures = 
         $this->conn->query("
             SELECT money,points,items
-            FROM   treasures
+            FROM   ".T_TREASURES."
             WHERE  user = '$this->user'"
             );
-    $this->treasures = $this->treasures->fetch_assoc();
-    $this->treasures['items'] = unserialize($this->treasures['items']);
-    $this->get_available_items();   // append available items to response
-  }
-    
-  // Returns array of avaible items
-  public function get_available_items() {
 
-    $this->conn->debug = false; // debug queries
+    // Creates treasures['money']..['points'] and ['items']
+    $this->treasures = $this->treasures->fetch_assoc();
+   
+    // Unserialize items, so they can be displayed 
+    $this->treasures['items'] = unserialize($this->treasures['items']);
+
+    // Get available items. Creates treasures['available_items'] and ['available_money']
     $items= $this->conn->query("SELECT items,money ".
                                "FROM ".T_USER_ITEMS.
                               " WHERE id = '$this->user_id'");
 
-    if($items->num_rows != 0) {
+    if($items->num_rows != 0) {   # this check is not mandatory
 
+      # items
       $items = $items->fetch_assoc();
       $this->treasures['available_items'] = unserialize($items['items']);
       if(count($this->treasures['available_items']) == 0) 
       {
-        $this->items_empty = true;          // D
+        $this->items_empty = true;          // used to display a message
+                                            // when win_items() is run
         $this->treasures['available_items'] = "You won all the items!!!";
       }
-      // also here, how to deliver response properly?
+
+      # money
       $this->treasures['available_money'] = $items['money'];
     }
   }
     
   // Convert user money to points
   public function convert_money($money,$points) {
-    $money = $this->treasures['money'] - $money;
-    $points = $this->treasures['points'] + $points;
-    $this->conn->debug=true;  // debug
-    $this->conn->query("UPDATE ".T_TREASURES." ".
+
+    $money = $this->treasures['money'] - $money;      // discard requested money from the available
+                                                      // amount
+    $points = $this->treasures['points'] + $points;   // add points to the total amount
+    
+
+    $this->conn->query("UPDATE ".T_TREASURES." ".     // update user entries
                        "SET   money  = $money,
                               points = $points 
                         WHERE user  ='$this->user'"
                       );
+
     echo json_encode($this->treasures);
   }
     
+  /* Debug/Admin part */
+  
   // Return json for user treasures
   public function get_items() {
-    echo json_encode($this->treasures);
+    echo json_encode($this->treasures); // initialized by constructor
   }
 
   // User won money
   public function win_money() {
 
-    $this->treasures['win']= 'money';
-    // No money available
-    if($this->treasures['available_money'] == 0) {
+    // Report win type
+    $this->treasures['win']= 'money';     
+    
+    if($this->treasures['available_money'] == 0) {// No money available
       $this->treasures['response'] = "You won all the money!!!";
       echo json_encode($this->treasures);
       return;
     }
 
+    // Money can be won in range of MONEY_MAX
     // Not enough money to full fill the MONEY_MAX range
     if(MONEY_MAX > $this->treasures['available_money']) 
       $win = rand(0,$this->treasures['available_money']);
@@ -158,7 +174,7 @@ class Treasures {
   // to user 'treasures'
   public function win_items() {
 
-    $this->treasures['win']= 'items';
+    $this->treasures['win']= 'items';     // treasure type
     if($this->items_empty) {   // no items available
       $this->treasures['response'] = "You won all the items!!!";
       echo json_encode($this->treasures);
@@ -206,13 +222,17 @@ class Treasures {
     $this->treasures['item_num']=$item_num;
     $this->treasures['win'] = "items";
 
+    // Return response to the page
     echo json_encode($this->treasures);
   }
 
   # Run one of the function names stored in wins[]
   public function play() { 
+    $games = GAMES;
+    #foreach ($games as $k=>$v) 
+      #echo "value: $v</br>";
     call_user_func(array(__NAMESPACE__.'\Treasures',
-                            $this->wins[rand(0,2)]));
+                            $games[rand(0,2)]));
   } 
 }
 

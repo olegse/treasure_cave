@@ -22,206 +22,15 @@ var_dump($_SESSION);
   <!-- Script -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js' type='text/javascript'></script>
+  <script src="room.js" type="text/javascript"></script>
 
 </head>
 <body>
 
-<script type="text/javascript">
-$(document).ready(function(){
-
-  // Trigger random function
-  $("#play").click(function(){
-    $.post("treasures.class.php",
-           { 
-            fn: "play"
-           },
-           function(data) 
-           {
-              loadItems(data);  // distribute data on a page
-           }
-           ,
-           "json"
-         );
-  });
-    
-  // Win money explicitly ("Win Money" button)
-  $("#win_money").click(function(){
-    $.post("treasures.class.php",
-            { 
-              fn: "win_money"
-            }, 
-            function(data) 
-            {
-              loadItems(data);
-            },
-            "json"
-          ); 
-  });
- 
-  // Win points explicitly ("Win Points" button)
-  $("#win_points").click(function(){
-    $.post("treasures.class.php",
-            {
-              fn: "win_points"
-            },
-            function(data) 
-            {
-              loadItems(data);
-            },
-            "json"
-         );
-  });
-
-  // Win items explicitly ("Win Items" button)
-  $("#win_items").click(function(){
-    $.post("treasures.class.php",
-            { 
-              fn: "win_items"
-            },
-            function(data) 
-            {
-             loadItems(data);
-            },
-            "json"
-          );
-
-  });
-
-  // Debug response
-  $("#get_items").click(function(){
-    $.post("treasures.class.php",
-            { 
-              fn: "get_items" 
-            },
-            function(data) 
-            {
-               alert(data) 
-            }
-         );
-  });
-
-  // Close button
-  $("#close").click(function(){
-     $("#empModal").modal("hide");
-  });
-
-  // Return response in pop-up window
-  function response_in_modal(response) {
-     $(".modal-title").html(response);
-     $("#empModal").modal("show");
-  }
-
-  // Update the page with treasures ("Load Items" button)
-  $("#load_items").click(function(){
-    getItems();
-  });
-    
-  // Functions
-  //
-
-  // Get page items
-  function getItems(){
-    $.post("treasures.class.php",
-            { 
-              fn: "get_items" 
-            },
-            function(data) 
-            {
-              loadItems(data);
-            },
-            "json"
-          );
-  }
-
-  // Distribute response data on a page
-  function loadItems(data) {
-
-    // Write response to the console
-    $.each(data,function(i,v){ console.log(i + " " + v); });
-
-    if(data.win == "items") { // Handle items
-                        
-      // Prompt for sending or canceling
-      $("#item_win").html(data.response);
-      $("#promptModal").modal("show");
-
-      // Send button click
-      $("#send_item").click(function(){
-        // respond in another modal
-        $("#promptModal").modal("hide");
-        response_in_modal("Item sent...");
-        // post request to the post office here...
-      });
-
-      // Item canceled, remove item from the won items
-      $("#cancel_item").unbind().click(function(){
-        $("#promptModal").modal("hide");
-        response_in_modal("Item canceled...");
-          $.post("treasures.class.php",
-            { fn: "cancel_item"},
-            function(data) { 
-              //alert(data);
-              $("#items").text(data);
-            },"json");
-      });
-    }
-    else if(data.response) {  // regular modal
-      response_in_modal(data.response);
-    }
-
-    // "Treasures" fields
-
-    // Money 
-    $("#money").text(data.money + "$");
-    $("#money").attr("value",data.money); // setting attribute here
-                                          // to 
-
-    // Points
-    $("#points").text(data.points);
-
-    // Items
-    if(!data.items) {
-      data.items = "";  // otherwise NULL is displayed
-    }
-    $("#items").text(data.items);
-    $("#available_items").text(data.available_items);
-
-    // Display real amount in the convert field
-    $("#money_convert").val(data.money);
-    showHint(data.money);   // calculate points
-
-  }
-
-  // Run when page is loaded
-  getItems();
-
-  // Convert money 
-  $("#convert").click(function(){
-    var money = $("#money_convert").val();    // get money value
-    var points = $("#points_converted").html(); // get points
-    $.post("treasures.class.php", 
-            { 
-              fn: "convert_money",
-              money: money,
-              points: points
-            }
-          );
-         
-    getItems();     // Update page
-  });
-
-
-  // Log Out
-  $("#log_out").click(function(){
-    window.location="/logout.php";
-  });
-
-});
-</script>
-
 <?php ; # var_dump($_SESSION); ?>
 <div class="container">
 
+  <!-- Greeting and prices -->
   <div>
     <h1><u><?php echo ucfirst($_SESSION['user']); ?> Treasures</u></h1> </br>
   </div>
@@ -243,14 +52,14 @@ $(document).ready(function(){
     <span id="available_items" ></td>
   </div>
 
-  <!-- Convert money on the fly -->
+  <!-- Convert money window -->
   <div>
     <h1><u>Convert Money</u></h1>
     <label for="money_convert">Money:</label>
     <input type="text" id="money_convert" size="4" name="money" max="0" value="0" onkeyup="showHint(this.value)">
     <span id="points_convert"><label for="points_convert">Points:</label></span>
     <span id="points_converted"> </span>
-    <button id="convert">Convert</button>
+    <button d="convert">Convert</button>
   </div>
 
   <script type="text/javascript">

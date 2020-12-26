@@ -2,7 +2,7 @@
 session_start();
 require_once("secret.php");
 
-$_SESSION['ratio'] = RATIO;
+$_SESSION['ratio'] = RATIO;   # oterwise initialized when on user log in? need to be set globally...
 
 ?>
 
@@ -79,7 +79,6 @@ $_SESSION['ratio'] = RATIO;
           $('#empModal').modal('show');
       };
 
-
       // Events
       $('#create_user').click(function(){
          $.post("users.php",
@@ -122,6 +121,7 @@ $_SESSION['ratio'] = RATIO;
       <button id="create_db" type="submit" value="Create">Create database</button>
     </label>
   </form>
+
   <form action="register.php" method="POST" target="_blank" />
     <label for="user">User</label>
       <input type="text" id="user" name="user">
