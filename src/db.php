@@ -131,13 +131,13 @@ class db {
     // Prepare user data for storing in database 
     $user = strtolower($user);  // username in lowercase
     $password = password_hash($password,PASSWORD_DEFAULT);    // hash the password
-    $this->query("insert into $this->table_users      
+    $this->query("insert into ".T_USERS."
                   (username,password)
                   values ('$user','$password')");
 
     // Here we create new entry for the user for the items that 
     // he can win. Money and items are empty.
-    $this->query("insert into $this->table_treasures (user) values ('$user')");   // no, use constant for table name
+    $this->query("insert into ".T_TREASURES." (user) values ('$user')");   // no, use constant for table name
 
     // Create pool of available items for the new user in T_USERS table. Items will be removed from
     // here and added to T_USER_TREASURES. 
@@ -146,7 +146,7 @@ class db {
     $items= serialize(ITEMS);    # serialize items to store in database blob
     $money= MONEY_GAME_MAX;      # maximum amount of money user can win
 
-    $this->query("insert into user_items (items,money) 
+    $this->query("insert into ".T_TREASURES." (items,money) 
                     values('$items','$money')  ");
 
     #$_session["user"] = $user;

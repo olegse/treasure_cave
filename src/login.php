@@ -3,9 +3,8 @@
 session_start();
 require("db.php");
 
-$db   = new db();     // here db layout is triggered first
+$db   = new db();     // here db layout is triggered at the first time
 
-# Variables in SESSION will be set if user was registering (register.php),
 $user =  $_POST['user'];
 $pass =  $_POST['pass'];
 

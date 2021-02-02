@@ -4,7 +4,6 @@ $( document ).ready(function(){
 
 // Play the game 
 $( document ).on('click','#play',function(){
-  alert("working!");
   $.post("treasures.class.php", { fn: "play" }, function(data) { loadItems(data); } , "json");
 });
         
@@ -69,7 +68,7 @@ function loadItems(data) {
   $.each(data,function(i,v){ console.log(i + ": " + v); });
 
   if(data.win == "items") { // Handle items
-                      
+                     
     // Prompt for sending or canceling
     $("#item_win").html(data.response);
     $("#promptModal").modal("show");
